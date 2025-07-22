@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+        title Noom
+    body 
+        main 
+            #welcome 
+                form 
+                    input(placeholder="room name", required, type="text")
+                    button Enter room
+            #myStream 
+                video#myFace(autoplay, playsinline, width="480", height="320")
+                button#mute mute 
+                button#camera Turn Camera Off
+                select#cameras
+        script(src="/socket.io/socket.io.js")
+        script(src="/public/js/app.js")
