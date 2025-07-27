@@ -1,0 +1,57 @@
+:root {
+    --main-color: #f05d11;
+    --sub-color: #ef9785;
+    --back-color: #fed5ce;
+    --subsub-color: #f09b86;
+    --point-color: #f2b6d5;
+    --minor-color:#f0a74f;
+}
+
+main {
+    width:100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#welcome {
+    width: 30vw;
+}   
+#welcome form {
+    display: grid;
+    gap:20px;
+    justify-content: center;
+}
+#welcome input {
+    border: none;
+    font-size: 26px;
+    text-align: center;
+    padding: 10px;
+    border-bottom: solid var(--subsub-color) 1px;
+    color: var(--main-color);
+}
+#welcome input:focus {
+    outline: none;
+    border-bottom: solid var(--main-color) 2px;
+}
+#welcome input::placeholder {
+    color: var(--sub-color);
+}
+
+#welcome button {
+    font-size: 28px;
+    border:none;
+    color: white;
+    background-color: var(--back-color);
+    cursor: pointer;
+    padding: 10px 20px;
+    justify-self: center;
+    width: 20vw;
+    border-radius: 19px;
+    transition: 0.3s;
+}
+
+#welcome button:hover {
+    background-color: var(--subsub-color);
+}

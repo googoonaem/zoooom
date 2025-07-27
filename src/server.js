@@ -31,24 +31,6 @@ instrument(wsServer, {
   auth: false,
 });
 
-const publicRooms = () => {
-  const {
-    sockets: {
-      adapter: { sids, rooms },
-    },
-  } = wsServer;
-  const publicRooms = [];
-  rooms.forEach((_, key) => {
-    if (sids.get(key) === undefined) {
-      publicRooms.push(key);
-    }
-  });
-  return publicRooms;
-};
-
-const countRoom = (roomName) => {
-  return wsServer.sockets.adapter.rooms.get(roomName)?.size;
-};
 
 const randomNickArr = ["i", "l", "1", "!"];
 const makeNick = () => {
@@ -60,34 +42,35 @@ const makeNick = () => {
   return randomNick;
 };
 
+const getPublicRooms = ()=>{
+  const {
+    sockets:{
+      adapter : {sids, rooms}
+    }
+  } = wsServer;
+  const publicRooms = [];
+  rooms.forEach((_, key) => {
+    if(sids.get(key) === undefined) {
+      publicRooms.push(key);
+    }
+  });
+  return publicRooms;
+}
+
 wsServer.on("connection", (socket) => {
-  if (socket.nickname === undefined) {
-    socket.nickname = makeNick();
-  }
-  socket.onAny((e) => {
-    console.log(`socket event: ${e}`);
-  });
-  socket.on("enter_room", (roomName, done) => {
+  socket.emit("rooms", getPublicRooms());
+  socket.on("join_room", (roomName) => {
     socket.join(roomName);
-    done();
-    socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName));
-    wsServer.sockets.emit("room_change", publicRooms(), countRoom(roomName));
+    socket.to(roomName).emit("welcome");
   });
-  socket.on("new_message", (data, done) => {
-    socket.to(data.roomName).emit("new_message", data.msg, socket.nickname);
-    done(data.msg);
+  socket.on("offer", (offer, roomName) => {
+    socket.to(roomName).emit("offer", offer, roomName);
   });
-  socket.on("nickname", (nickname) => {
-    socket["nickname"] = nickname;
-    done();
+  socket.on("answer", (data) => {
+    socket.to(data.roomName).emit("answer", data.answer);
   });
-  socket.on("disconnecting", () => {
-    socket.rooms.forEach((room) => {
-      socket.to(room).emit("bye", socket.nickname, countRoom(room) - 1);
-    });
-  });
-  socket.on("disconnect", () => {
-    wsServer.sockets.emit("room_change", publicRooms());
+  socket.on("ice", (data) =>{
+    socket.to(data.roomName).emit("ice", data.candidate);
   });
 });
 

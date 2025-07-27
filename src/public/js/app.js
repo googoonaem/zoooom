@@ -1,175 +1,208 @@
 const socket = io();
-const myFace = document.querySelector("#myFace");
-const muteBtn = document.querySelector("#mute");
-const cameraBtn = document.querySelector("#camera");
-const cameraSelect = document.querySelector("#cameras");
+const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+const myFace = document.getElementById("myFace");
+const muteBtn = document.getElementById("mute");
+const cameraBtn = document.getElementById("camera");
+const cameraSelect = document.getElementById("cameras");
+const call = document.getElementById("call");
+const chat = document.getElementById("chat");
+const chatUl = call.querySelector("ul");
+
+call.hidden = true;
+
 let myStream;
 let muted = false;
 let cameraOff = false;
+let roomName;
+let myPeerConnection;
+let myDataChannel;
 
-const handleCameraChange = async () => {
-  await getMedia(cameraSelect.value);
-};
 
-const getCameras = async () => {
+const getCameras = async() => {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const cameras = devices.filter((device) => device.kind === "videoinput");
     const currentCamera = myStream.getVideoTracks()[0];
-    cameras.forEach((video) => {
+    cameras.forEach((camera) => {
       const option = document.createElement("option");
-      option.value = video.deviceId;
-      option.innerText = video.label !== "" ? video.label : "Device Video";
-      if (currentCamera.label == cameraBtn.label) {
+      option.value = camera.deviceId;
+      option.innerText = camera.label;
+      if(currentCamera.label == camera.label) {
         option.selected = true;
       }
       cameraSelect.appendChild(option);
     });
+
   } catch (error) {
     console.log(error);
   }
-};
+}
 
-const handleMuteClick = () => {
-  if (!muted) {
-    myStream.getAudioTracks().forEach((track) => {
-      track.enabled = !track.enabled;
-    });
+const getMedia = async (deviceId) => {
+    const initialConstrains = {
+    audio: true,
+    video: { facingMode: "user" },
+  };
+  const cameraConstraints = {
+    audio: true,
+    video: { deviceId: { exact: deviceId } },
+  };
+  try {
+    myStream = await navigator.mediaDevices.getUserMedia(deviceId ? cameraConstraints : initialConstrains);
+    myFace.srcObject = myStream;
+    if(!deviceId) {
+      await getCameras();
+    }
+  }catch(error) {
+    console.log(error);
+  }
+}
+
+const handleMuteCLick = () => {
+  myStream.getAudioTracks().forEach((track) =>(track.enabled = !track.enabled));
+  if(!muted) {
     muteBtn.innerText = "Unmute";
     muted = true;
   } else {
     muteBtn.innerText = "Mute";
     muted = false;
   }
-};
-const handleCameraClick = () => {
-  if (!cameraOff) {
+}
+const handleCameraCLick = () => {
+  myStream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+  if(cameraOff) {
     cameraBtn.innerText = "Turn Camera Off";
-    cameraOff = true;
+    cameraOff = false;
   } else {
     cameraBtn.innerText = "Turn Camera On";
-    cameraOff = false;
+    cameraOff = true;
   }
-};
-muteBtn.addEventListener("click", handleMuteClick);
-cameraBtn.addEventListener("click", handleCameraClick);
-cameraSelect.addEventListener("input", handleCameraChange);
+}
 
-const getMedia = async (deviceId) => {
-  try {
-    const initialConstrains = {
-      audio: true,
-      video: { facingMode: "user" },
-    };
-    const cameraConstrains = {
-      audio: true,
-      video: { deviceId: { exact: deviceId } },
-    };
-    myStream = await navigator.mediaDevices.getDisplayMedia(
-      deviceId ? cameraConstrains : initialConstrains
-    );
-    myFace.srcObject = myStream;
-    if (!deviceId) {
-      await getCameras();
+const handleCameraSwitch = async () => {
+  await getMedia(cameraSelect.value);
+  if(myPeerConnection) {
+    const videoSender = myPeerConnection.getSenders();
+    console.log(videoSender);
+  }
+}
+
+const handleChatSubmit = (e) =>{
+  e.preventDefault();
+  const input = chat.querySelector("input");
+  myDataChannel.send(JSON.stringify({
+    type:"message",
+    message: input.value
+  }));
+  importChat("owner", input.value);
+  input.value = "";
+}
+
+const importChat = (isOwner,message) =>{
+  const li = document.createElement("li");
+  li.innerText =  `${isOwner === "owner"? "나" :"someone"}: ${message}`;
+  chatUl.appendChild(li);
+}
+
+
+muteBtn.addEventListener("click", handleMuteCLick);
+cameraBtn.addEventListener("click", handleCameraCLick);
+cameraSelect.addEventListener("input", handleCameraSwitch);
+chat.addEventListener("submit", handleChatSubmit);
+
+const welcome = document.getElementById("welcome");
+const welcomeForm = welcome.querySelector("form");
+const welcomeSelect = welcome.querySelector("select");
+
+
+socket.on("rooms", (rooms) =>{
+  if(rooms.length != 0) {
+    rooms.forEach((room) => {
+      const option = document.createElement("option");
+      option.innerText = room;
+      option.value=room;
+      welcomeSelect.appendChild(option);
+    })
+    
+  }
+});
+
+const initCall = async () => {
+  welcome.hidden = true;
+  call.hidden = false;
+  await getMedia();
+  makeConnection();
+
+}
+
+const handleWelcomeSubmit = async (e) => {
+  e.preventDefault();
+  const input = welcomeForm.querySelector("input");
+  await initCall();
+  socket.emit("join_room", input.value);
+  roomName = input.value;
+  input.value = "";
+}
+
+
+welcomeForm.addEventListener("submit", handleWelcomeSubmit);
+
+
+socket.on("welcome",async () => {
+  myDataChannel = myPeerConnection.createDataChannel("chat");
+  myDataChannel.addEventListener("message", (message) => {
+    const parsedMsg = JSON.parse(message.data);
+    if(parsedMsg.type === "message") {
+      importChat("someone",parsedMsg.message);
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
-getMedia();
+  });
+  const offer = await myPeerConnection.createOffer();
+  await myPeerConnection.setLocalDescription(offer);
+  console.log("sent the offer");
+  socket.emit("offer", offer, roomName);
+});
 
-// const welcome = document.querySelector("#welcome");
-// const form = welcome.querySelector("form");
-// const room = document.querySelector("#room");
-// room.hidden = true;
-// let roomName;
-// let count = 0;
+socket.on("offer", async (offer) => {
+  myPeerConnection.addEventListener("datachannel", (event) => {
+    myDataChannel = event.channel;
+    myDataChannel.addEventListener("message",  (message) =>{
+      const parsedMsg = JSON.parse(message.data);
+      if(parsedMsg.type === "message") {
+        importChat("someone", parsedMsg.message);
+      }
+    })
+  })
+  console.log("received the offer");
+  myPeerConnection.setRemoteDescription(offer);
+  const answer = await myPeerConnection.createAnswer();
+  myPeerConnection.setLocalDescription(answer);
+  socket.emit("answer", {answer, roomName});
+  console.log("send the answer");
+});
 
-// const addMessage = (message, user) => {
-//   const ul = room.querySelector("ul");
-//   const li = document.createElement("li");
-//   if (user === undefined) {
-//     li.innerText = `You: ${message}`;
-//   } else {
-//     li.innerText = `${user}: ${message}`;
-//   }
-//   ul.appendChild(li);
-// };
+socket.on("answer", (answer) => {
+  console.log("received the answer");
+  myPeerConnection.setRemoteDescription(answer);
+});
 
-// const addSystemMessage = (message) => {
-//   const ul = room.querySelector("ul");
-//   const li = document.createElement("li");
-//   li.innerText = message;
-//   ul.appendChild(li);
-//   setTimeout(() => {
-//     li.remove();
-//   }, 3000);
-// };
+socket.on("ice", (ice) =>{
+  console.log("received candidate");
+  myPeerConnection.addIceCandidate(ice);
+});
 
-// const handleMessageSubmit = (e) => {
-//   e.preventDefault();
-//   const input = room.querySelector("#msg input");
-//   socket.emit("new_message", { msg: input.value, roomName }, (msg) => {
-//     addMessage(msg);
-//   });
-//   input.value = "";
-//   input.focus();
-// };
 
-// const handleNicknameSubmit = (e) => {
-//   e.preventDefault();
-//   const input = room.querySelector("#name input");
-//   socket.emit("nickname", input.value);
-// };
-
-// const showRoom = () => {
-//   welcome.hidden = true;
-//   room.hidden = false;
-//   const h3 = room.querySelector("h3");
-//   h3.innerText = `room ${roomName} (${count + 1})`;
-//   const msgForm = room.querySelector("#msg");
-//   const nickForm = room.querySelector("#name");
-//   nickForm.addEventListener("submit", handleNicknameSubmit);
-//   msgForm.addEventListener("submit", handleMessageSubmit);
-// };
-
-// const handleSubmit = (e) => {
-//   e.preventDefault();
-//   const input = form.querySelector("input");
-//   roomName = input.value;
-//   socket.emit("enter_room", input.value, showRoom);
-//   input.value = "";
-// };
-
-// socket.on("room_change", (rooms, countRoom) => {
-//   const roomList = welcome.querySelector("ul");
-//   roomList.innerHTML = "";
-//   count = countRoom;
-//   if (rooms.length === 0) {
-//     return;
-//   }
-//   rooms.forEach((room) => {
-//     const li = document.createElement("li");
-//     li.innerText = room;
-//     roomList.append(li);
-//   });
-// });
-
-// socket.on("welcome", (user, newCount) => {
-//   const h3 = room.querySelector("h3");
-//   h3.innerText = `room ${roomName} (${newCount})`;
-//   addSystemMessage(`${user} join the room`);
-// });
-// socket.on("bye", (user, newCount) => {
-//   const h3 = room.querySelector("h3");
-//   h3.innerText = `room ${roomName} (${newCount})`;
-//   addSystemMessage(`${user} left the room`);
-// });
-
-// socket.onAny((e) => {
-//   console.log(`socket event: ${e}`);
-// });
-
-// socket.on("new_message", addMessage);
-
-// form.addEventListener("submit", handleSubmit);
+const makeConnection = () => {
+  myPeerConnection = new RTCPeerConnection();
+  myPeerConnection.addEventListener("icecandidate", handleIce);
+  myPeerConnection.addEventListener("track", handleAddStream);
+  myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));
+}
+const handleIce = (data) => {
+  console.log("send candidate");
+  socket.emit("ice", {candidate: data.candidate, roomName});  
+}
+const handleAddStream = (data) => {
+  const peersFace = document.getElementById("peersFace");
+  console.log(data);
+  peersFace.srcObject = data.streams[0];
+}
