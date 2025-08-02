@@ -1,0 +1,497 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+body {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+#windowContainer {
+  width: 800px;
+  height: 780px;
+  border: 3px solid rgb(184, 184, 184);
+  background-color: rgb(184, 184, 184);
+  padding: 2px 0px;
+}
+
+#windowContainer > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  height: 22px;
+  background-color: rgb(0, 0, 126);
+  padding: 5px 6px 1px 6px;
+}
+
+#windowContainer > div:first-child > div:first-child {
+  color: white;
+}
+
+#windowBtns {
+  display: flex;
+  gap: 2px;
+}
+#windowBtns > div {
+  width: 16px;
+  height: 14px;
+  background-color: rgb(184, 184, 184);
+  border-top: 2px solid white;
+  position: relative;
+}
+.windowBtn {
+  position: absolute;
+}
+
+#windowBtns > div:first-child > .windowBtn {
+  bottom: -3px;
+  left: 2px;
+}
+#windowBtns > div:nth-child(2) > .windowBtn {
+  transform: rotateZ(270deg);
+  font-size: 13px;
+  left: -1px;
+  top: 1px;
+}
+#windowBtns > div:last-child > .windowBtn {
+  left: 3px;
+  top: -1px;
+  transform: scaleY(0.7);
+}
+#windowContainer > div:nth-child(2) {
+  height: 22px;
+  padding: 5px 6px 1px 6px;
+}
+#windowContainer > div:nth-child(2) > div {
+  width: 200px;
+  display: flex;
+  font-size: 15px;
+  justify-content: space-between;
+}
+#windowContainer > #container {
+  height: calc(100% - 110px);
+  background-color: black;
+}
+#windowContainer > #container > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(102, 182, 182);
+  border-radius: 9px 9px 0 0;
+  border-top: 1px solid black;
+  padding-top: 3px;
+  padding-right: 7px;
+}
+#windowContainer > #container > div:first-child > div:first-child {
+  background-color: white;
+  padding: 10px 30px;
+  padding-left: 50px;
+  margin-left: 5px;
+  border-radius: 6px 6px 0 0px;
+  border: 1px double rgb(102, 182, 164);
+  display: flex;
+  justify-content: end;
+  position: relative;
+}
+#windowContainer
+  > #container
+  > div:first-child
+  > div:first-child
+  > span:first-child {
+  font-size: 22px;
+  position: absolute;
+  left: 16px;
+  top: 4px;
+}
+#windowContainer > #container > div:first-child > div:last-child {
+  display: flex;
+  gap: 2px;
+  width: 150px;
+}
+#windowContainer > #container > div:first-child > div:last-child > .button {
+  border: 1px solid rgb(37, 82, 72);
+  width: 45px;
+  height: 23px;
+  background: linear-gradient(
+    to bottom,
+    rgb(192, 233, 229),
+    rgb(102, 182, 178) 10%,
+    rgb(102, 182, 182) 30%,
+    rgb(74, 134, 134) 95%
+  );
+  border-radius: 3px;
+  color: white;
+  text-align: center;
+  line-height: 23px;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+#windowContainer > #container > div:nth-child(2) {
+  display: flex;
+  width: calc(100% - 14px);
+  height: 100%;
+  border-radius: 0 0 9px 9px;
+  border: 1px solid black;
+  border-top: none;
+  gap: 6px;
+  padding: 6px;
+  background-color: white;
+}
+#windowContainer > #container > div:nth-child(2) > div {
+  border-radius: 7px;
+}
+#windowContainer > #container > div:nth-child(2) > #chatContainer {
+  flex: 3;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:first-child {
+  background: linear-gradient(
+    to bottom,
+    rgb(197, 235, 235),
+    rgb(183, 219, 219) 60%,
+    rgb(150, 194, 194) 95%
+  );
+  padding: 6px 4px;
+  color: rgb(37, 82, 72);
+  border-radius: 7px 7px 0 0px;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:first-child
+  > .button {
+  display: inline-block;
+
+  width: 55px;
+  height: 20px;
+  background: linear-gradient(
+    to bottom,
+    rgb(255, 255, 255),
+    rgb(252, 255, 255) 10%,
+    rgb(255, 255, 255) 30%,
+    rgb(225, 236, 236) 95%
+  );
+  border-radius: 3px;
+
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:first-child
+  > :nth-child(2) {
+  margin: 0 5px;
+}
+#windowContainer > #container > div:nth-child(2) > #chatContainer > ul {
+  border: 1px solid rgb(104, 177, 161);
+  height: 460px;
+  border-top: none;
+  overflow-y: scroll;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child {
+  border: 1px solid rgb(104, 177, 161);
+  margin-top: 8px;
+  height: 168px;
+  display: grid;
+  border-radius: 0 0 7px 7px;
+  position: relative;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child
+  > div:first-child {
+  display: flex;
+  background: linear-gradient(
+    to bottom,
+    rgb(197, 235, 235),
+    rgb(183, 219, 219) 60%,
+    rgb(150, 194, 194) 95%
+  );
+  padding: 6px 8px;
+  color: rgb(37, 82, 72);
+  gap: 2px;
+  height: 26px;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child
+  > div:first-child
+  > span {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgb(102, 182, 164);
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  padding: 2px;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child
+  > div:nth-child(2) {
+  height: 130px;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child
+  > div:nth-child(2)
+  > form {
+  position: relative;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child
+  > div:nth-child(2)
+  > form
+  > textarea {
+  width: calc(100% - 6px);
+  height: 95px;
+  resize: none;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid rgb(102, 182, 164);
+}
+textarea:focus {
+  outline: none;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child
+  > div:nth-child(2)
+  > form
+  > button {
+  position: absolute;
+  width: 90px;
+  height: 50px;
+  background: linear-gradient(
+    to bottom,
+    rgb(252, 254, 255),
+    rgb(230, 240, 240) 10%,
+    rgb(237, 247, 248) 70%,
+    rgb(201, 230, 230) 95%
+  );
+  border-radius: 5px;
+  border: 1px solid rgb(41, 139, 139);
+  color: rgb(36, 102, 88);
+  top: 25px;
+  right: 10px;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #chatContainer
+  > div:last-child
+  > div:last-child {
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  border-radius: 0 0 6px 6px;
+  background: linear-gradient(
+    to bottom,
+    rgb(197, 235, 235),
+    rgb(183, 219, 219) 60%,
+    rgb(150, 194, 194) 95%
+  );
+  border-top: 1px solid rgb(102, 182, 164);
+}
+#windowContainer > #container > div:nth-child(2) > div:nth-child(2) {
+  width: 0px;
+  border-right: 1px solid rgb(74, 134, 134);
+}
+#windowContainer > #container > div:nth-child(2) > #streamContainer {
+  flex: 1;
+  border: 1px solid rgb(74, 134, 134);
+  padding: 2px;
+}
+#windowContainer > #container > div:nth-child(2) > #streamContainer > div {
+  border: 1px solid rgb(224, 240, 221);
+  border-radius: 5px;
+  height: calc(100% - 2px);
+  background-color: rgb(224, 241, 220);
+  display: grid;
+  align-items: stretch;
+  position: relative;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #streamContainer
+  > div
+  video {
+  width: 250px;
+  border: 1px solid black;
+  background-color: black;
+  height: 250px;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #streamContainer
+  > div
+  > div {
+  position: absolute;
+  bottom: 0;
+}
+#windowContainer
+  > #container
+  > div:nth-child(2)
+  > #streamContainer
+  > div
+  > div
+  > div {
+  right: 2px;
+  position: absolute;
+  top: 2px;
+  display: flex;
+  gap: 2px;
+}

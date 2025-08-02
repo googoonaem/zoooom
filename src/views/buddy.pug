@@ -1,0 +1,64 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Noom
+        link(rel="stylesheet", href="/public/css/home.css")
+    body
+        main 
+            #windowContainer
+                div
+                    div 
+                        span &#128034;
+                        span 대화하기 
+                    div#windowBtns
+                        div 
+                            span.windowBtn &#8722;
+                        div
+                            span.windowBtn &#9704;
+                        div
+                            span.windowBtn X 
+                div 
+                    div 
+                        span 파일(F) 
+                        span 기능(A) 
+                        span 도구(T) 
+                #container
+                    div
+                        div 
+                            span &#128172; 
+                            span 대화 
+                        div 
+                            span.button 초대 
+                            span.button 화상
+                            span.button 음성 
+                    div 
+                        div#chatContainer
+                            div
+                                span.button 대화상대
+                                span :
+                                span nickname
+                            ul 
+                            div 
+                                div
+                                    span &#8868; 
+                                    span &#128512; 
+                                    span &#128444; 
+                                    span &#128451; 
+                                div 
+                                    form 
+                                        textarea(cols="30", rows="5")
+                                        button.button 보내기(S) 
+                                div 
+                        div 
+                        div#streamContainer
+                            div 
+                                video#guestFace(autoplay, playsinline, width='270', height="340")
+                                div 
+                                    div 
+                                        button#mute Mute
+                                        button#camera Camera
+                                    video#myFace(autoplay, playsinline, width='270', height="340")
+        script(src="/public/js/app.js") 
